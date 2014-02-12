@@ -13,9 +13,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = QtBaroboLink
 TEMPLATE = app
 
-INCLUDEPATH = libbarobo\
-              libbarobo/BaroboConfigFile\
-              libbarobo/BaroboConfigFile/mxml-2.7\
+INCLUDEPATH = ../libbarobo/include\
+              ../libbarobo/BaroboConfigFile\
+              ../libbarobo/BaroboConfigFile/mxml-2.7\
               inc
 
 SOURCES += src/main.cpp\
@@ -51,10 +51,7 @@ FORMS    += mainwindow.ui \
     scandialog.ui \
     scanwidget.ui
 
-LIBS += -Llibbarobo/build/ -lbaroboStatic -lbluetooth\
-        -Llibbarobo/build/BaroboConfigFile -lbaroboconfigfile\
-        -Llibbarobo/build/BaroboConfigFile/mxml-2.7 -lmxml\
-        -Llibbarobo/build/libsfp -lsfpStatic
+LIBS += -L../stage/lib -lbarobo -lsfp
 
 RESOURCES += \
     resource.qrc
