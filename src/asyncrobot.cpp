@@ -1,4 +1,5 @@
 #include "asyncrobot.h"
+#include "mainwindow.h"
 #include <QCoreApplication>
 #include <QDebug>
 #include <QThread>
@@ -8,10 +9,18 @@ AsyncRobot::AsyncRobot()
 {
   jointSignalEnable_ = false;
   accelSignalEnable_ = false;
+  buzzerState_ = false;
+  buzzerFreq_ = 440;
   timer_ = new QTimer(this);
 }
 
 AsyncRobot::~AsyncRobot() {}
+
+void AsyncRobot::acquireJointControl()
+{
+  qDebug() << "Joint control acquired.";
+  jointControl_ = true;
+}
 
 void AsyncRobot::bindMobot(CLinkbot* mobot)
 {
@@ -21,19 +30,17 @@ void AsyncRobot::bindMobot(CLinkbot* mobot)
   mobotLock_.unlock();
 }
 
-void AsyncRobot::enableJointSignals(bool enable)
+QColor AsyncRobot::getLEDColor()
 {
-  qDebug() << "enable Joint Signals: " << enable;
+  int r, g, b;
   mobotLock_.lock();
-  jointSignalEnable_ = enable;
+  if(mobot_ == NULL) {
+    mobotLock_.unlock();
+    return QColor(0, 0, 0);
+  }
+  mobot_->getColorRGB(r, g, b);
   mobotLock_.unlock();
-}
-
-void AsyncRobot::enableAccelSignals(bool enable)
-{
-  mobotLock_.lock();
-  accelSignalEnable_ = enable;
-  mobotLock_.unlock();
+  return QColor(r, g, b);
 }
 
 void AsyncRobot::disableJointSignals()
@@ -45,128 +52,6 @@ void AsyncRobot::disableJointSignals()
 void AsyncRobot::disableAccelSignals()
 {
   enableAccelSignals(false);
-}
-
-void AsyncRobot::acquireJointControl()
-{
-  qDebug() << "Joint control acquired.";
-  jointControl_ = true;
-}
-
-void AsyncRobot::releaseJointControl()
-{
-  qDebug() << "Joint control released.";
-  jointControl_ = false;
-}
-
-void AsyncRobot::stopWork()
-{
-  mobotLock_.lock();
-  timer_->stop();
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::driveJointTo(int joint, double angle)
-{
-  if(false == jointControl_) return;
-  qDebug() << "Drive joint " << joint << " to " << angle;
-  desiredJointAnglesLock_.lock();
-  desiredJointAngles_[joint-1] = angle;
-  anglesDirtyMask_ |= 1<<(joint-1);
-  desiredJointAnglesLock_.unlock();
-}
-
-void AsyncRobot::moveJoint(int joint, int direction)
-{
-  mobotLock_.lock();
-  mobot_->setJointMovementStateNB(
-      static_cast<robotJointId_t>(joint), 
-      static_cast<robotJointState_t>(direction));
-  if(joint == 2) {
-  mobot_->setJointMovementStateNB(
-      static_cast<robotJointId_t>(3), 
-      static_cast<robotJointState_t>(direction));
-  }
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::resetToZero()
-{
-  mobotLock_.lock();
-  mobot_->resetToZeroNB();
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::setSpeed1(int speed)
-{
-  mobotLock_.lock();
-  mobot_->setJointSpeed((robotJointId_t)1, speed);
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::setSpeed2(int speed)
-{
-  mobotLock_.lock();
-  mobot_->setJointSpeed((robotJointId_t)2, speed);
-  mobot_->setJointSpeed((robotJointId_t)3, speed);
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::stop()
-{
-  mobotLock_.lock();
-  mobot_->stop();
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::stopJoint(int joint)
-{
-  mobotLock_.lock();
-  mobot_->stopOneJoint(static_cast<robotJointId_t>(joint));
-  if(joint == 2) {
-    mobot_->stopOneJoint(static_cast<robotJointId_t>(3));
-  }
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::moveForward()
-{
-  mobotLock_.lock();
-  mobot_->moveContinuousNB(
-      ROBOT_FORWARD,
-      ROBOT_FORWARD,
-      ROBOT_FORWARD);
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::moveBackward()
-{
-  mobotLock_.lock();
-  mobot_->moveContinuousNB(
-      ROBOT_BACKWARD,
-      ROBOT_BACKWARD,
-      ROBOT_BACKWARD);
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::turnLeft()
-{
-  mobotLock_.lock();
-  mobot_->moveContinuousNB(
-      ROBOT_BACKWARD,
-      ROBOT_BACKWARD,
-      ROBOT_FORWARD);
-  mobotLock_.unlock();
-}
-
-void AsyncRobot::turnRight()
-{
-  mobotLock_.lock();
-  mobot_->moveContinuousNB(
-      ROBOT_FORWARD,
-      ROBOT_BACKWARD,
-      ROBOT_BACKWARD);
-  mobotLock_.unlock();
 }
 
 void AsyncRobot::doWork()
@@ -181,7 +66,10 @@ void AsyncRobot::doWork()
     mobotLock_.unlock();
     return;
   }
-  if(jointSignalEnable_) {
+  if(
+      jointSignalEnable_ &&
+      (mainWindow()->currentTab() == 0)
+    ) {
     mobot_->getJointAngles( 
         jointAngles[0], 
         jointAngles[1], 
@@ -218,7 +106,10 @@ void AsyncRobot::doWork()
       memcpy(lastJointAngles_, jointAngles, sizeof(double)*3);
     }
   }
-  if(accelSignalEnable_) {
+  if(
+      accelSignalEnable_ &&
+      (mainWindow()->currentTab() == 1)
+      ) {
     mobot_->getAccelerometerData(accel[0], accel[1], accel[2]);
     if(memcmp(accel, lastAccel_, sizeof(double)*3)) {
       emit accelChanged(accel[0], accel[1], accel[2]);
@@ -238,6 +129,152 @@ void AsyncRobot::doWork()
 
   mobotLock_.unlock();
   QThread::yieldCurrentThread();
+}
+
+void AsyncRobot::driveJointTo(int joint, double angle)
+{
+  if(false == jointControl_) return;
+  qDebug() << "Drive joint " << joint << " to " << angle;
+  desiredJointAnglesLock_.lock();
+  desiredJointAngles_[joint-1] = angle;
+  anglesDirtyMask_ |= 1<<(joint-1);
+  desiredJointAnglesLock_.unlock();
+}
+
+void AsyncRobot::enableJointSignals(bool enable)
+{
+  qDebug() << "enable Joint Signals: " << enable;
+  mobotLock_.lock();
+  jointSignalEnable_ = enable;
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::enableJointSignals(int enable)
+{
+  enableJointSignals(static_cast<bool>(enable));
+}
+
+void AsyncRobot::enableAccelSignals(bool enable)
+{
+  mobotLock_.lock();
+  accelSignalEnable_ = enable;
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::enableAccelSignals(int enable)
+{
+  enableJointSignals(static_cast<bool>(enable));
+}
+
+void AsyncRobot::moveBackward()
+{
+  mobotLock_.lock();
+  mobot_->moveContinuousNB(
+      ROBOT_BACKWARD,
+      ROBOT_BACKWARD,
+      ROBOT_BACKWARD);
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::moveForward()
+{
+  mobotLock_.lock();
+  mobot_->moveContinuousNB(
+      ROBOT_FORWARD,
+      ROBOT_FORWARD,
+      ROBOT_FORWARD);
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::moveJoint(int joint, int direction)
+{
+  mobotLock_.lock();
+  mobot_->setJointMovementStateNB(
+      static_cast<robotJointId_t>(joint), 
+      static_cast<robotJointState_t>(direction));
+  if(joint == 2) {
+  mobot_->setJointMovementStateNB(
+      static_cast<robotJointId_t>(3), 
+      static_cast<robotJointState_t>(direction));
+  }
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::releaseJointControl()
+{
+  qDebug() << "Joint control released.";
+  jointControl_ = false;
+}
+
+void AsyncRobot::resetToZero()
+{
+  mobotLock_.lock();
+  mobot_->resetToZeroNB();
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::setBuzzerFrequency(int freq)
+{
+  mobotLock_.lock();
+  buzzerFreq_ = freq;
+  if(buzzerState_) {
+    if(mobot_ == NULL) {
+      mobotLock_.unlock();
+      return;
+    }
+    mobot_->setBuzzerFrequencyOn(freq);
+  }
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::setBuzzerOn()
+{
+  mobotLock_.lock();
+  buzzerState_ = true;
+  if(mobot_ == NULL) {
+    mobotLock_.unlock();
+    return;
+  }
+  mobot_->setBuzzerFrequencyOn(buzzerFreq_);
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::setBuzzerOff()
+{
+  mobotLock_.lock();
+  buzzerState_ = false;
+  if(mobot_ == NULL) {
+    mobotLock_.unlock();
+    return;
+  }
+  mobot_->setBuzzerFrequencyOn(0);
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::setLEDColor(const QColor &color)
+{
+  mobotLock_.lock();
+  if(mobot_ == NULL) {
+    mobotLock_.unlock();
+    return;
+  }
+  mobot_->setColorRGB(color.red(), color.green(), color.blue());
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::setSpeed1(int speed)
+{
+  mobotLock_.lock();
+  mobot_->setJointSpeed((robotJointId_t)1, speed);
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::setSpeed2(int speed)
+{
+  mobotLock_.lock();
+  mobot_->setJointSpeed((robotJointId_t)2, speed);
+  mobot_->setJointSpeed((robotJointId_t)3, speed);
+  mobotLock_.unlock();
 }
 
 void AsyncRobot::setState(int state)
@@ -282,6 +319,50 @@ void AsyncRobot::startWork()
   anglesDirtyMask_ = 0;
   connect(timer_, SIGNAL(timeout()), this, SLOT(doWork()));
   timer_->start();
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::stop()
+{
+  mobotLock_.lock();
+  mobot_->stop();
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::stopJoint(int joint)
+{
+  mobotLock_.lock();
+  mobot_->stopOneJoint(static_cast<robotJointId_t>(joint));
+  if(joint == 2) {
+    mobot_->stopOneJoint(static_cast<robotJointId_t>(3));
+  }
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::stopWork()
+{
+  mobotLock_.lock();
+  timer_->stop();
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::turnLeft()
+{
+  mobotLock_.lock();
+  mobot_->moveContinuousNB(
+      ROBOT_BACKWARD,
+      ROBOT_BACKWARD,
+      ROBOT_FORWARD);
+  mobotLock_.unlock();
+}
+
+void AsyncRobot::turnRight()
+{
+  mobotLock_.lock();
+  mobot_->moveContinuousNB(
+      ROBOT_FORWARD,
+      ROBOT_BACKWARD,
+      ROBOT_BACKWARD);
   mobotLock_.unlock();
 }
 

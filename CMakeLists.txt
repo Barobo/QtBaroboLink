@@ -80,6 +80,7 @@ set(SOURCES
     src/scanlist.cpp
     src/tcpcomms.cpp
     src/QMobot.cpp
+    src/auxcontrolpanel.cpp
    )
 
 set(HEADERS
@@ -92,6 +93,7 @@ set(HEADERS
     inc/scanlist.h
     inc/tcpcomms.h
     inc/QMobot.h
+    inc/auxcontrolpanel.h
    )
 
 set(UIFILES
@@ -100,6 +102,7 @@ set(UIFILES
     mainwindow.ui
     scandialog.ui
     scanwidget.ui
+    auxcontrol.ui
    )
 
 QT5_WRAP_CPP(HEADERS_MOC ${HEADERS})

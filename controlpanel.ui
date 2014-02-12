@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>392</width>
-    <height>475</height>
+    <height>487</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -389,6 +389,9 @@
    </item>
    <item row="3" column="1">
     <widget class="QGroupBox" name="groupBox_5">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="title">
       <string>Acceleration</string>
      </property>
