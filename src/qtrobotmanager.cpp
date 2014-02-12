@@ -117,6 +117,7 @@ int QtRobotManager::read(const char* path)
     QObject::connect(_mobots[i], SIGNAL(connectError(const QString &)), 
         mainWindow(), SLOT(errorDialog(const QString &)), Qt::QueuedConnection);
   }
+  return 0;
 }
 
 void QtRobotManager::displayContextMenu(const QPoint &)
