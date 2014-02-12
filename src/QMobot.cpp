@@ -30,4 +30,5 @@ int QMobot::connectWithAddress(const char address[], int channel)
   } else {
     emit connectStatusChanged(RMOBOT_CONNECTED);
   }
+  return 0;
 }
