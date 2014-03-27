@@ -17,6 +17,7 @@ class CommsRobotClient : public QObject
   public slots:
     void bytesFromClientReady();
     void disconnect();
+    void sendDataToClient(const QByteArray &bytearray);
 
   private:
     QTcpSocket *sock_;
@@ -37,7 +38,7 @@ class CommsForwarding : public QObject
     void newConnection();
 
   private:
-    QTcpServer *server_;
+    QTcpServer server_;
     QList<CommsRobotClient*> clients_;
 };
 

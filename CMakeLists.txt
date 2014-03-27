@@ -83,7 +83,7 @@ set(SOURCES
     src/auxcontrolpanel.cpp
    )
 
-set(HEADERS
+qt5_wrap_cpp(HEADERS
     inc/asyncrobot.h
     inc/connectdialog.h
     inc/controlpanel.h
@@ -96,7 +96,7 @@ set(HEADERS
     inc/auxcontrolpanel.h
    )
 
-set(UIFILES
+qt5_wrap_ui(UIFILES
     connectpanel.ui
     controlpanel.ui
     mainwindow.ui
@@ -105,11 +105,9 @@ set(UIFILES
     auxcontrol.ui
    )
 
-QT5_WRAP_CPP(HEADERS_MOC ${HEADERS})
-QT5_WRAP_UI(UIFILES_MOC ${UIFILES})
 ADD_DEFINITIONS(${QT_DEFINITIONS})
 
-add_executable(${TARGET} ${SOURCES} ${HEADERS_MOC} ${UIFILES_MOC} ${RESOURCES})
+add_executable(${TARGET} ${SOURCES} ${HEADERS} ${UIFILES} ${RESOURCES})
 
 # FIXME when it becomes feasible to require CMake >= 2.8.11, remove this crap
 # search on the internet for "CMake policy CMP0020" to read why
@@ -124,9 +122,9 @@ qt5_use_modules(${TARGET} Widgets Network WebKitWidgets)
 install(TARGETS ${TARGET} RUNTIME DESTINATION ${INSTALL_BIN_DIR})
 
 if(APPLE)
-# Qt5 headers won't compile without the following...
-set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS "-mmacosx-version-min=10.7 -stdlib=libc++")
-set_target_properties(${TARGET} PROPERTIES LINK_FLAGS "-mmacosx-version-min=10.7 -stdlib=libc++")
+  # Qt5 headers won't compile without the following...
+  set_target_properties(${TARGET} PROPERTIES COMPILE_FLAGS "-mmacosx-version-min=10.7 -stdlib=libc++")
+  set_target_properties(${TARGET} PROPERTIES LINK_FLAGS "-mmacosx-version-min=10.7 -stdlib=libc++")
 endif()
 
 # Include required libraries at install-time. This is the Windows way.
@@ -176,6 +174,9 @@ if(WIN32)
   # Long-term fix: write my own FindMSVC.cmake module and programmatically set
   # gp_cmd_paths from its output.
   # Longer-term fix: fix GetPrerequisites.cmake. This is ridiculous.
+  #
+  # NOTE: You will probably need to add "<path to VS>/Common7/IDE" to your
+  # path, otherwise link.exe will fail with a missing DLL.
   install(CODE "
     include(BundleUtilities)
     set(gp_cmd_paths \${gp_cmd_paths}
@@ -186,29 +187,66 @@ endif()
 
 ##############################################################################
 
-include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BaroboLink")
-set(CPACK_PACKAGE_NAME "BaroboLink")
-set(CPACK_PACKAGE_VENDOR "Barobo, inc.")
+if(CMAKE_SYSTEM_NAME MATCHES [Ll]inux)
+  string(TOLOWER "${CPACK_PACKAGE_NAME}" CPACK_PACKAGE_NAME_LOWERCASE)
+  find_program(DPKG_PROGRAM dpkg DOC "dpkg program of Debian-based systems")
+  if(DPKG_PROGRAM)
+       execute_process(COMMAND ${DPKG_PROGRAM} --print-architecture
+                 OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE
+                 OUTPUT_STRIP_TRAILING_WHITESPACE)
+       set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${PROJECT_VERSION}-${CPACK_DEBIAN_PACKAGE_REVISION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}") 
+  else(DPKG_PROGRAM)
+       set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${PROJECT_VERSION}-${CPACK_DEBIAN_PACKAGE_REVISION}_${CMAKE_SYSTEM_NAME}")
+  endif(DPKG_PROGRAM)
+
+  include(InstallRequiredSystemLibraries)
+
+  set(CPACK_SET_DESTDIR "on")
+  set(CPACK_PACKAGE_NAME "BaroboLink")
+  set(CPACK_PACKAGING_INSTALL_PREFIX "/tmp")
+  set(CPACK_GENERATOR "DEB")
+
+  set(VERSION 1.5.5)
+  set(CPACK_DEBIAN_PACKAGE_VERSION ${VERSION})
+  set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+  set(CPACK_DEBIAN_PACKAGE_SECTION "Science & Engineering")
+  set(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+#SET (CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libgladeui-1-11, libglib2.0-0, libgtk2.0-0")
+  set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
+  set(CPACK_PACKAGE_DESCRIPTION "Barobo Robot Controller")
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Graphical Interface for controlling, programming, and interacting with Barobo Mobots and Linkbots.")
+  set(CPACK_PACKAGE_CONTACT "david@barobo.com")
+  set(CPACK_DEBIAN_PACKAGE_MAINTAINER "David Ko <david@barobo.com>")
+  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+
+  set(CPACK_COMPONENTS_ALL Libraries ApplicationData)
+  include(CPack)
+else()
+  include(InstallRequiredSystemLibraries)
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BaroboLink")
+  set(CPACK_PACKAGE_NAME "BaroboLink")
+  set(CPACK_PACKAGE_VENDOR "Barobo, inc.")
 #set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
 #set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
-set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+  set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+  set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
 #set(CPACK_PACKAGE_VERSION_PATCH "2")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "BaroboLink ${VERSION_MAJOR}.${VERSION_MINOR}.alpha${VERSION_ALPHA}")
-if(WIN32 AND NOT UNIX)
-  # There is a bug in NSI that does not handle full unix paths properly. Make
-  # sure there is at least one set of four (4) backlasshes.
-  #set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
-  #set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
-  set(CPACK_NSIS_DISPLAY_NAME "BaroboLink ${VERSION_MAJOR}.${VERSION_MINOR}.alpha${VERSION_ALPHA}")
-  set(CPACK_NSIS_HELP_LINK "http://www.barobo.com")
-  set(CPACK_NSIS_URL_INFO_ABOUT "http://www.barobo.com")
-  set(CPACK_NSIS_CONTACT "david@barobo.com")
-  set(CPACK_NSIS_MODIFY_PATH ON)
-else(WIN32 AND NOT UNIX)
-  #set(CPACK_STRIP_FILES "bin/MyExecutable")
-  #set(CPACK_SOURCE_STRIP_FILES "")
-endif(WIN32 AND NOT UNIX)
-set(CPACK_PACKAGE_EXECUTABLES "${TARGET}" "BaroboLink")
-include(CPack)
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "BaroboLink ${VERSION_MAJOR}.${VERSION_MINOR}.alpha${VERSION_ALPHA}")
+  if(WIN32 AND NOT UNIX)
+    # There is a bug in NSI that does not handle full unix paths properly. Make
+    # sure there is at least one set of four (4) backlasshes.
+    #set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
+    #set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
+    set(CPACK_NSIS_DISPLAY_NAME "BaroboLink ${VERSION_MAJOR}.${VERSION_MINOR}.alpha${VERSION_ALPHA}")
+    set(CPACK_NSIS_HELP_LINK "http://www.barobo.com")
+    set(CPACK_NSIS_URL_INFO_ABOUT "http://www.barobo.com")
+    set(CPACK_NSIS_CONTACT "david@barobo.com")
+    set(CPACK_NSIS_MODIFY_PATH ON)
+  else(WIN32 AND NOT UNIX)
+    #set(CPACK_STRIP_FILES "bin/MyExecutable")
+    #set(CPACK_SOURCE_STRIP_FILES "")
+  endif(WIN32 AND NOT UNIX)
+  set(CPACK_PACKAGE_EXECUTABLES "${TARGET}" "BaroboLink")
+  include(CPack)
+endif()

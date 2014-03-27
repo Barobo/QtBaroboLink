@@ -7,9 +7,10 @@
 #include <QDebug>
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow (QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+    , comms_()
 {
     ui->setupUi(this);
 }
@@ -51,11 +52,12 @@ void MainWindow::init()
 
     /* Set up connect panel */
     connectDialog_ = new ConnectDialogForm();
+    /* addWidget parents connectDialog_ to layout_connectArea's parent. */
     ui->layout_connectArea->addWidget(connectDialog_);
     connectDialog_->show();
 
     /* Start comms forwarding */
-    comms_ = new CommsForwarding();
+    comms_ = new CommsForwarding;
     comms_->start();
 
     connectSignals();
@@ -73,7 +75,7 @@ void MainWindow::errorDialog(const QString & msg)
   msgBox.exec();
 }
 
-void MainWindow::connectSignals()
+void MainWindow::connectSignals ()
 {
   QObject::connect(connectDialog_->tableView_Robots, SIGNAL(pressed(const QModelIndex &)),
       controlPanel_, SLOT(setActiveRobot(const QModelIndex&)));

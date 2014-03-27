@@ -1,6 +1,13 @@
 #include "qtrobotmanager.h"
 #include "tcpcomms.h"
 
+void eventCallback(const uint8_t* buf, int size, void* userdata)
+{
+  CommsRobotClient *client = static_cast<CommsRobotClient*>(userdata);
+  QByteArray bytes((const char*)buf, size);
+  client->sendDataToClient(bytes);
+}
+
 CommsRobotClient::CommsRobotClient(QObject *parent) : QObject(parent)
 {
 }
@@ -42,25 +49,27 @@ void CommsRobotClient::disconnect()
   recvbuf_.clear();
 }
 
-CommsForwarding::CommsForwarding(QObject *parent) : QObject(parent)
+void CommsRobotClient::sendDataToClient(const QByteArray &bytearray)
 {
-  server_ = new QTcpServer();
+  sock_->write(bytearray);
 }
 
-CommsForwarding::~CommsForwarding()
-{
-}
+CommsForwarding::CommsForwarding(QObject *parent)
+    : QObject(parent)
+    , server_() { }
+
+CommsForwarding::~CommsForwarding() { }
 
 void CommsForwarding::start(quint16 port)
 {
-  if(server_->isListening()) return;
-  server_->listen(QHostAddress::Any, port);
-  QObject::connect(server_, SIGNAL(newConnection()), this, SLOT(newConnection()));
+  if(server_.isListening()) return;
+  server_.listen(QHostAddress::Any, port);
+  QObject::connect(&server_, SIGNAL(newConnection()), this, SLOT(newConnection()));
 }
 
 void CommsForwarding::stop()
 {
-  server_->close();
+  server_.close();
 }
 
 void CommsForwarding::newConnection()
@@ -69,7 +78,7 @@ void CommsForwarding::newConnection()
   /* Listener received a new connection. */
   /* See if we can get an unbound robot */
   QTcpSocket* sock;
-  sock = server_->nextPendingConnection();
+  sock = server_.nextPendingConnection();
   RecordMobot* robot = robotManager()->getUnboundMobot();
   if(NULL == robot) {
     /* Immediately close the connection and return */
@@ -81,6 +90,7 @@ void CommsForwarding::newConnection()
   CommsRobotClient* client = new CommsRobotClient();
   client->init(sock, robot);
   clients_.prepend(client);
+  robot->enableEventCallback(eventCallback, client);
   qDebug() << "Finished receiving new connection.";
 }
 

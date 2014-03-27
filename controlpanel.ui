@@ -388,36 +388,20 @@
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="QGroupBox" name="groupBox_5">
-     <property name="enabled">
-      <bool>false</bool>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="title">
-      <string>Acceleration</string>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="1" column="0">
-       <widget class="QLineEdit" name="edit_accel1"/>
-      </item>
-      <item row="0" column="0">
-       <widget class="QSlider" name="slider_accel1">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="edit_accel2"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSlider" name="slider_accel2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

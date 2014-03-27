@@ -29,7 +29,6 @@ class QtRobotManager : public QAbstractTableModel, public CRobotManager
     int connectIndex(int index);
     int disconnectIndex(int index);
 
-    void displayContextMenu(const QPoint &p);
     inline void setActiveIndex(int index) {_activeIndex = index;}
     void setActiveIndex(const QModelIndex &index);
     void clicked(const QModelIndex &index);

@@ -143,7 +143,6 @@ void ControlPanelForm::enable(int state)
   this->groupBox_2->setEnabled(enable);
   this->groupBox_3->setEnabled(enable);
   this->groupBox_4->setEnabled(enable);
-  this->groupBox_5->setEnabled(enable);
 }
 
 void ControlPanelForm::setJ1Label(int value)

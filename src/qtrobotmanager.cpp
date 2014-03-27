@@ -120,23 +120,6 @@ int QtRobotManager::read(const char* path)
   return 0;
 }
 
-void QtRobotManager::displayContextMenu(const QPoint &)
-{
-  QMenu menu;
-  QAction *connectaction = menu.addAction("Connect");
-  QAction *disconnectaction = menu.addAction("Disconnect");
-  QAction *removeaction = menu.addAction("Remove");
-  if(isConnected(_activeIndex)) {
-    connectaction->setEnabled(false);
-  } else {
-    disconnectaction->setEnabled(false);
-  }
-  QObject::connect(connectaction, SIGNAL(triggered()), this, SLOT(connectActiveIndex()));
-  QObject::connect(disconnectaction, SIGNAL(triggered()), this, SLOT(disconnectActiveIndex()));
-  QObject::connect(removeaction, SIGNAL(triggered()), this, SLOT(removeActiveIndex()));
-  menu.exec(QCursor::pos());
-}
-
 void QtRobotManager::clicked(const QModelIndex &)
 {
   qDebug() << "click.";
