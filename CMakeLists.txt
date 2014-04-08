@@ -7,6 +7,14 @@ cmake_policy(VERSION 2.8.9)
 
 project(QtBaroboLink)
 
+set(VERSION_MAJOR 2)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 4)
+set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+
+##############################################################################
+# Setup
+
 # Since this is an executable project, we want all shared libraries generated
 # by subprojects to be deposited in our own binary directory. This allows us
 # to run our executable immediately after compilation, without copying
@@ -18,12 +26,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 # also be deposited in our binary directory.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
+set(required_libbarobo_version 0.1.0)
 add_subdirectory(../libbarobo libbarobo)
-
-set(VERSION_MAJOR 2)
-set(VERSION_MINOR 0)
-set(VERSION_ALPHA 0)
-set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+if(LIBBAROBO_VERSION VERSION_LESS ${required_libbarobo_version})
+  message(FATAL_ERROR "QtBaroboLink requires libbarobo version ${required_libbarobo_version}")
+endif()
 
 set(CMAKE_MODULE_PATH 
     ${CMAKE_MODULE_PATH}
@@ -51,7 +58,6 @@ message(STATUS "${PROJECT_NAME} will install data to ${CMAKE_INSTALL_PREFIX}/${I
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(LIBBAROBO)
 include_directories(${LIBBAROBO_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/inc ${PROJECT_BINARY_DIR})
 
 # Using gnu++11 instead of c++11 to workaround off64_t issue in late versions
@@ -187,6 +193,35 @@ endif()
 
 ##############################################################################
 
+if(WIN32)
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BaroboLink")
+set(CPACK_PACKAGE_NAME "BaroboLink")
+set(CPACK_PACKAGE_VENDOR "Barobo, inc.")
+#set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
+#set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "BaroboLink ${VERSION}")
+if(WIN32 AND NOT UNIX)
+  # There is a bug in NSI that does not handle full unix paths properly. Make
+  # sure there is at least one set of four (4) backlasshes.
+  #set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
+  #set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
+  set(CPACK_NSIS_DISPLAY_NAME "BaroboLink ${VERSION}")
+  set(CPACK_NSIS_HELP_LINK "http://www.barobo.com")
+  set(CPACK_NSIS_URL_INFO_ABOUT "http://www.barobo.com")
+  set(CPACK_NSIS_CONTACT "david@barobo.com")
+  set(CPACK_NSIS_MODIFY_PATH ON)
+else(WIN32 AND NOT UNIX)
+  #set(CPACK_STRIP_FILES "bin/MyExecutable")
+  #set(CPACK_SOURCE_STRIP_FILES "")
+endif(WIN32 AND NOT UNIX)
+set(CPACK_PACKAGE_EXECUTABLES "${TARGET}" "BaroboLink")
+include(CPack)
+endif()
+
 if(CMAKE_SYSTEM_NAME MATCHES [Ll]inux)
   string(TOLOWER "${CPACK_PACKAGE_NAME}" CPACK_PACKAGE_NAME_LOWERCASE)
   find_program(DPKG_PROGRAM dpkg DOC "dpkg program of Debian-based systems")
@@ -199,54 +234,26 @@ if(CMAKE_SYSTEM_NAME MATCHES [Ll]inux)
        set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${PROJECT_VERSION}-${CPACK_DEBIAN_PACKAGE_REVISION}_${CMAKE_SYSTEM_NAME}")
   endif(DPKG_PROGRAM)
 
-  include(InstallRequiredSystemLibraries)
+  INCLUDE (InstallRequiredSystemLibraries)
 
-  set(CPACK_SET_DESTDIR "on")
-  set(CPACK_PACKAGE_NAME "BaroboLink")
-  set(CPACK_PACKAGING_INSTALL_PREFIX "/tmp")
-  set(CPACK_GENERATOR "DEB")
+  SET (CPACK_SET_DESTDIR "on")
+  SET (CPACK_PACKAGE_NAME "BaroboLink")
+  SET (CPACK_PACKAGING_INSTALL_PREFIX "/tmp")
+  SET (CPACK_GENERATOR "DEB")
 
-  set(VERSION 1.5.5)
-  set(CPACK_DEBIAN_PACKAGE_VERSION ${VERSION})
-  set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-  set(CPACK_DEBIAN_PACKAGE_SECTION "Science & Engineering")
-  set(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+  SET (CPACK_DEBIAN_PACKAGE_VERSION ${VERSION})
+  SET (CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+  SET (CPACK_DEBIAN_PACKAGE_SECTION "Science & Engineering")
+  SET (CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
 #SET (CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libgladeui-1-11, libglib2.0-0, libgtk2.0-0")
-  set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+  set (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
-  set(CPACK_PACKAGE_DESCRIPTION "Barobo Robot Controller")
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Graphical Interface for controlling, programming, and interacting with Barobo Mobots and Linkbots.")
-  set(CPACK_PACKAGE_CONTACT "david@barobo.com")
-  set(CPACK_DEBIAN_PACKAGE_MAINTAINER "David Ko <david@barobo.com>")
-  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+  SET (CPACK_PACKAGE_DESCRIPTION "Barobo Robot Controller")
+  SET (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Graphical Interface for controlling, programming, and interacting with Barobo Mobots and Linkbots.")
+  SET (CPACK_PACKAGE_CONTACT "david@barobo.com")
+  SET (CPACK_DEBIAN_PACKAGE_MAINTAINER "David Ko <david@barobo.com>")
+  SET (CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
 
-  set(CPACK_COMPONENTS_ALL Libraries ApplicationData)
-  include(CPack)
-else()
-  include(InstallRequiredSystemLibraries)
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BaroboLink")
-  set(CPACK_PACKAGE_NAME "BaroboLink")
-  set(CPACK_PACKAGE_VENDOR "Barobo, inc.")
-#set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
-#set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
-  set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
-  set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
-#set(CPACK_PACKAGE_VERSION_PATCH "2")
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "BaroboLink ${VERSION_MAJOR}.${VERSION_MINOR}.alpha${VERSION_ALPHA}")
-  if(WIN32 AND NOT UNIX)
-    # There is a bug in NSI that does not handle full unix paths properly. Make
-    # sure there is at least one set of four (4) backlasshes.
-    #set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
-    #set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
-    set(CPACK_NSIS_DISPLAY_NAME "BaroboLink ${VERSION_MAJOR}.${VERSION_MINOR}.alpha${VERSION_ALPHA}")
-    set(CPACK_NSIS_HELP_LINK "http://www.barobo.com")
-    set(CPACK_NSIS_URL_INFO_ABOUT "http://www.barobo.com")
-    set(CPACK_NSIS_CONTACT "david@barobo.com")
-    set(CPACK_NSIS_MODIFY_PATH ON)
-  else(WIN32 AND NOT UNIX)
-    #set(CPACK_STRIP_FILES "bin/MyExecutable")
-    #set(CPACK_SOURCE_STRIP_FILES "")
-  endif(WIN32 AND NOT UNIX)
-  set(CPACK_PACKAGE_EXECUTABLES "${TARGET}" "BaroboLink")
-  include(CPack)
+  SET (CPACK_COMPONENTS_ALL Libraries ApplicationData)
+  INCLUDE (CPack)
 endif()
