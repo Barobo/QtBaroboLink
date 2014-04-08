@@ -113,6 +113,9 @@ ControlPanelForm::ControlPanelForm(AsyncRobot* asyncRobot, QWidget *parent)
   QObject::connect(this->edit_speed2, SIGNAL(returnPressed()),
       this, SLOT(speed2EntryActivated()));
 
+  /* Connect move motor button */
+  QObject::connect(this->pushButton_move, SIGNAL(clicked()),
+      this, SLOT(moveMotorButtonClicked()));
 }
  
 void ControlPanelForm::driveJoint1To(int angle)
@@ -173,6 +176,12 @@ void ControlPanelForm::setJ1Label(const QString &value)
 void ControlPanelForm::setJ2Label(const QString &value)
 {
   this->label_j2_angle->setText(value);  
+}
+
+void ControlPanelForm::setJ2LabelText(const QString &value)
+{
+  this->label_j2->setText(value);
+  this->label_j2b->setText(value);
 }
 
 void ControlPanelForm::j1forward_handler()
@@ -241,6 +250,15 @@ void ControlPanelForm::speed2EntryActivated()
   this->slider_speed2->setValue(text.toInt());
 }
 
+void ControlPanelForm::moveMotorButtonClicked()
+{
+  double j1, j2;
+  j1 = this->edit_move1->text().toDouble();
+  j2 = this->edit_move2->text().toDouble();
+
+  asyncrobot_->move(j1, j2, j2);
+}
+
 void ControlPanelForm::setActiveRobot(int index)
 {
   /* Get the mobot object */
@@ -253,6 +271,13 @@ void ControlPanelForm::setActiveRobot(int index)
     asyncrobot_->enableAccelSignals(true);
     QMetaObject::invokeMethod(asyncrobot_, "startWork", Qt::QueuedConnection);
     emit setUIWidgetsState(true);
+    int form;
+    mobot->getFormFactor(form);
+    if(form == MOBOTFORM_I) {
+      setJ2LabelText("Joint 3");
+    } else {
+      setJ2LabelText("Joint 2");
+    }
   } else {
     /* Stop the thread if it is running */
     asyncrobot_->stopWork();

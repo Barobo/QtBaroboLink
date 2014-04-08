@@ -201,6 +201,13 @@ void AsyncRobot::moveJoint(int joint, int direction)
   mobotLock_.unlock();
 }
 
+void AsyncRobot::move(double j1, double j2, double j3)
+{
+  mobotLock_.lock();
+  mobot_->moveNB(j1, j2, j3);
+  mobotLock_.unlock();
+}
+
 void AsyncRobot::releaseJointControl()
 {
   qDebug() << "Joint control released.";
