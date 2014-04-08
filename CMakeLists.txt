@@ -9,7 +9,7 @@ project(QtBaroboLink)
 
 set(VERSION_MAJOR 2)
 set(VERSION_MINOR 0)
-set(VERSION_PATCH 1)
+set(VERSION_PATCH 4)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 ##############################################################################
