@@ -193,16 +193,17 @@ endif()
 
 ##############################################################################
 
+if(WIN32)
 include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BaroboLink")
-set(CPACK_PACKAGE_NAME "BaroboLink")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "QtBaroboLink")
+set(CPACK_PACKAGE_NAME "QtBaroboLink")
 set(CPACK_PACKAGE_VENDOR "Barobo, inc.")
 #set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
 #set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "BaroboLink ${VERSION}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "QtBaroboLink ${VERSION}")
 if(WIN32 AND NOT UNIX)
   # There is a bug in NSI that does not handle full unix paths properly. Make
   # sure there is at least one set of four (4) backlasshes.
@@ -219,3 +220,40 @@ else(WIN32 AND NOT UNIX)
 endif(WIN32 AND NOT UNIX)
 set(CPACK_PACKAGE_EXECUTABLES "${TARGET}" "BaroboLink")
 include(CPack)
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES [Ll]inux)
+  string(TOLOWER "${CPACK_PACKAGE_NAME}" CPACK_PACKAGE_NAME_LOWERCASE)
+  find_program(DPKG_PROGRAM dpkg DOC "dpkg program of Debian-based systems")
+  if(DPKG_PROGRAM)
+       execute_process(COMMAND ${DPKG_PROGRAM} --print-architecture
+                 OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE
+                 OUTPUT_STRIP_TRAILING_WHITESPACE)
+       set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${PROJECT_VERSION}-${CPACK_DEBIAN_PACKAGE_REVISION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}") 
+  else(DPKG_PROGRAM)
+       set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${PROJECT_VERSION}-${CPACK_DEBIAN_PACKAGE_REVISION}_${CMAKE_SYSTEM_NAME}")
+  endif(DPKG_PROGRAM)
+
+  INCLUDE (InstallRequiredSystemLibraries)
+
+  SET (CPACK_SET_DESTDIR "on")
+  SET (CPACK_PACKAGE_NAME "QtBaroboLink")
+  SET (CPACK_PACKAGING_INSTALL_PREFIX "/tmp")
+  SET (CPACK_GENERATOR "DEB")
+
+  SET (CPACK_DEBIAN_PACKAGE_VERSION ${VERSION})
+  SET (CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+  SET (CPACK_DEBIAN_PACKAGE_SECTION "Science & Engineering")
+  SET (CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+#SET (CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libgladeui-1-11, libglib2.0-0, libgtk2.0-0")
+  set (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
+  SET (CPACK_PACKAGE_DESCRIPTION "Barobo Robot Controller")
+  SET (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Graphical Interface for controlling, programming, and interacting with Barobo Mobots and Linkbots.")
+  SET (CPACK_PACKAGE_CONTACT "david@barobo.com")
+  SET (CPACK_DEBIAN_PACKAGE_MAINTAINER "David Ko <david@barobo.com>")
+  SET (CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+
+  SET (CPACK_COMPONENTS_ALL Libraries ApplicationData)
+  INCLUDE (CPack)
+endif()
