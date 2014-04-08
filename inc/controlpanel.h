@@ -24,6 +24,8 @@ class ControlPanelForm : public QWidget, private Ui::ControlPanelForm
     void setJ1Label(const QString &value);
     void setJ2Label(const QString &value);
 
+    void setJ2LabelText(const QString &value);
+
     void j1forward_handler();
     void j1backward_handler();
     void j1stop_handler();
@@ -37,6 +39,8 @@ class ControlPanelForm : public QWidget, private Ui::ControlPanelForm
     void setSpeed2Label(double value);
     void setSpeed2Label(int value);
     void speed2EntryActivated();
+
+    void moveMotorButtonClicked();
 
 signals:
     void beginMovingJoint(int joint, int direction);

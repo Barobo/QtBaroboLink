@@ -29,6 +29,7 @@ class AsyncRobot:public QObject
     void moveBackward();
     void moveForward();
     void moveJoint(int joint, int direction);
+    void move(double angle1, double angle2, double angle3);
     void releaseJointControl();
     void resetToZero();
     void setBuzzerFrequency(int freq);
