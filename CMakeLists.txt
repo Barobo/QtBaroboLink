@@ -28,7 +28,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 set(required_libbarobo_version 0.1.0)
 add_subdirectory(../libbarobo libbarobo)
-if(NOT LIBBAROBO_VERSION VERSION_EQUAL ${required_libbarobo_version})
+if(LIBBAROBO_VERSION VERSION_LESS ${required_libbarobo_version})
   message(FATAL_ERROR "QtBaroboLink requires libbarobo version ${required_libbarobo_version}")
 endif()
 
