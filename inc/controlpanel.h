@@ -41,6 +41,7 @@ class ControlPanelForm : public QWidget, private Ui::ControlPanelForm
     void speed2EntryActivated();
 
     void moveMotorButtonClicked();
+    void setSpeedClicked();
 
 signals:
     void beginMovingJoint(int joint, int direction);
