@@ -16,6 +16,8 @@ TEMPLATE = app
 INCLUDEPATH = ../stage/include \
               inc
 
+ICON = Barobo_square.icns
+
 SOURCES += src/main.cpp\
         src/mainwindow.cpp\
         src/robotmanager.cpp\
