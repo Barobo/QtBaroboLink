@@ -46,12 +46,7 @@
        </widget>
        <widget class="QWidget" name="tab_aux">
         <attribute name="title">
-         <string>Auxiliary Control, Sensors</string>
-        </attribute>
-       </widget>
-       <widget class="QWidget" name="tab_poseTeaching">
-        <attribute name="title">
-         <string>Pose Teaching</string>
+         <string>Sensors &amp;&amp; more</string>
         </attribute>
        </widget>
       </widget>
