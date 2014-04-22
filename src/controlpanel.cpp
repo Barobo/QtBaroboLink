@@ -116,6 +116,9 @@ ControlPanelForm::ControlPanelForm(AsyncRobot* asyncRobot, QWidget *parent)
   /* Connect move motor button */
   QObject::connect(this->pushButton_move, SIGNAL(clicked()),
       this, SLOT(moveMotorButtonClicked()));
+
+  QObject::connect(this->pushButton_setSpeed, SIGNAL(clicked()),
+      this, SLOT(setSpeedClicked()));
 }
  
 void ControlPanelForm::driveJoint1To(int angle)
@@ -289,4 +292,12 @@ void ControlPanelForm::setActiveRobot(int index)
 void ControlPanelForm::setActiveRobot(const QModelIndex &index)
 {
   setActiveRobot(index.row());
+}
+
+void ControlPanelForm::setSpeedClicked()
+{
+  QString text = this->edit_speed1->text();
+  this->slider_speed1->setValue(text.toInt());
+  text = this->edit_speed2->text();
+  this->slider_speed2->setValue(text.toInt());
 }

@@ -13,10 +13,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = QtBaroboLink
 TEMPLATE = app
 
-INCLUDEPATH = ../libbarobo/include\
-              ../libbarobo/BaroboConfigFile\
-              ../libbarobo/BaroboConfigFile/mxml-2.7\
+INCLUDEPATH = ../stage/include \
               inc
+
+ICON = Barobo_square.icns
 
 SOURCES += src/main.cpp\
         src/mainwindow.cpp\
@@ -54,7 +54,7 @@ FORMS    += mainwindow.ui \
     scanwidget.ui \
     auxcontrol.ui
 
-LIBS += -L../stage/lib -lbarobo -lsfp
+LIBS += -L../stage/lib -lbarobo 
 
 RESOURCES += \
     resource.qrc
