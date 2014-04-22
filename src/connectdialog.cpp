@@ -163,4 +163,6 @@ void ConnectDialogForm::connectSignals(void)
       this, SLOT(scanRobots()));
   QObject::connect(this->pushButton_connect, SIGNAL(clicked()),
       this, SLOT(connectIndices()));
+  QObject::connect(this->pushButton_disconnect, SIGNAL(clicked()),
+      this, SLOT(disconnectIndices()));
 }

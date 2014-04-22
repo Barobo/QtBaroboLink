@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>392</width>
-    <height>487</height>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -302,15 +302,11 @@
       <string>Speed</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="edit_speed2"/>
+      </item>
       <item row="0" column="0">
        <widget class="QSlider" name="slider_speed1">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSlider" name="slider_speed2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -319,8 +315,19 @@
       <item row="1" column="0">
        <widget class="QLineEdit" name="edit_speed1"/>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="edit_speed2"/>
+      <item row="0" column="1">
+       <widget class="QSlider" name="slider_speed2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_setSpeed">
+        <property name="text">
+         <string>Set Speed</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
