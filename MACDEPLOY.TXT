@@ -1,0 +1,6 @@
+macdeployqt QtBaroboLink.app
+cp -R ../libbarobo/chmobot_src/chbarobo-0.1/chbarobo QtBaroboLink.app/
+sudo rm -rf /Applications/BaroboLink.app
+sudo cp -R QtBaroboLink.app /Applications/BaroboLink.app
+<Run package maker>
+<run hdiutil>
