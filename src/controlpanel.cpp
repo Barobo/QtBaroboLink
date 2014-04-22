@@ -270,8 +270,7 @@ void ControlPanelForm::setActiveRobot(int index)
   if(mobot != NULL && mobot->isConnected()) {
     this->setEnabled(true);
     asyncrobot_->bindMobot(mobot);
-    asyncrobot_->enableJointSignals(true);
-    asyncrobot_->enableAccelSignals(true);
+    asyncrobot_->setState(enabled_);
     QMetaObject::invokeMethod(asyncrobot_, "startWork", Qt::QueuedConnection);
     emit setUIWidgetsState(true);
     int form;
