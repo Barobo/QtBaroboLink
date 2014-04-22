@@ -15,6 +15,7 @@ ControlPanelForm::ControlPanelForm(AsyncRobot* asyncRobot, QWidget *parent)
   mobotthread_ = new QThread();
   asyncrobot_->moveToThread(mobotthread_);
   mobotthread_->start();
+  enabled_ = 1;
 
   /* Connect motor drive buttons */
   QObject::connect(this->button_j1Forward, SIGNAL(clicked()),
@@ -273,7 +274,7 @@ void ControlPanelForm::setActiveRobot(int index)
     asyncrobot_->bindMobot(mobot);
     asyncrobot_->setState(enabled_);
     QMetaObject::invokeMethod(asyncrobot_, "startWork", Qt::QueuedConnection);
-    emit setUIWidgetsState(true);
+    emit setUIWidgetsState(enabled_);
     int form;
     mobot->getFormFactor(form);
     if(form == MOBOTFORM_I) {
