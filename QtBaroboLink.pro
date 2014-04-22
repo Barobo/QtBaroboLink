@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+VERSION = 2.0.6
+
 QT       += core gui network
 
 CONFIG += qt debug
