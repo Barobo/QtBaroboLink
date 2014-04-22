@@ -1,6 +1,13 @@
 #include "qtrobotmanager.h"
 #include "tcpcomms.h"
 
+void eventCallback(const uint8_t* buf, int size, void* userdata)
+{
+  CommsRobotClient *client = static_cast<CommsRobotClient*>(userdata);
+  QByteArray bytes((const char*)buf, size);
+  client->sendDataToClient(bytes);
+}
+
 CommsRobotClient::CommsRobotClient(QObject *parent) : QObject(parent)
 {
 }
@@ -42,6 +49,11 @@ void CommsRobotClient::disconnect()
   recvbuf_.clear();
 }
 
+void CommsRobotClient::sendDataToClient(const QByteArray &bytearray)
+{
+  sock_->write(bytearray);
+}
+
 CommsForwarding::CommsForwarding(QObject *parent)
     : QObject(parent)
     , server_() { }
@@ -78,6 +90,7 @@ void CommsForwarding::newConnection()
   CommsRobotClient* client = new CommsRobotClient();
   client->init(sock, robot);
   clients_.prepend(client);
+  robot->enableEventCallback(eventCallback, client);
   qDebug() << "Finished receiving new connection.";
 }
 

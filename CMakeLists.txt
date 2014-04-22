@@ -195,15 +195,15 @@ endif()
 
 if(WIN32)
 include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "QtBaroboLink")
-set(CPACK_PACKAGE_NAME "QtBaroboLink")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BaroboLink")
+set(CPACK_PACKAGE_NAME "BaroboLink")
 set(CPACK_PACKAGE_VENDOR "Barobo, inc.")
 #set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
 #set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "QtBaroboLink ${VERSION}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "BaroboLink ${VERSION}")
 if(WIN32 AND NOT UNIX)
   # There is a bug in NSI that does not handle full unix paths properly. Make
   # sure there is at least one set of four (4) backlasshes.
@@ -237,7 +237,7 @@ if(CMAKE_SYSTEM_NAME MATCHES [Ll]inux)
   INCLUDE (InstallRequiredSystemLibraries)
 
   SET (CPACK_SET_DESTDIR "on")
-  SET (CPACK_PACKAGE_NAME "QtBaroboLink")
+  SET (CPACK_PACKAGE_NAME "BaroboLink")
   SET (CPACK_PACKAGING_INSTALL_PREFIX "/tmp")
   SET (CPACK_GENERATOR "DEB")
 
