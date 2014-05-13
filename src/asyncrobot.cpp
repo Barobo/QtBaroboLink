@@ -23,7 +23,7 @@ void AsyncRobot::acquireJointControl()
   jointControl_ = true;
 }
 
-void AsyncRobot::bindMobot(CLinkbot* mobot)
+void AsyncRobot::bindMobot(QMobot* mobot)
 {
   mobotLock_.lock();
   mobot_ = mobot;
@@ -67,6 +67,7 @@ void AsyncRobot::doWork()
     mobotLock_.unlock();
     return;
   }
+  mobot_->lock();
   if(
       jointSignalEnable_ &&
       (mainWindow()->currentTab() == 0)
@@ -129,6 +130,7 @@ void AsyncRobot::doWork()
   desiredJointAnglesLock_.unlock();
 
   mobotLock_.unlock();
+  mobot_->unlock();
   QThread::yieldCurrentThread();
 }
 

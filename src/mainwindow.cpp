@@ -83,5 +83,7 @@ void MainWindow::connectSignals ()
       controlPanel_, SLOT(setActiveRobot(const QModelIndex&)));
   QObject::connect(robotManager(), SIGNAL(activeRobotSelected(int)), 
       controlPanel_, SLOT(setActiveRobot(int)));
+  QObject::connect(connectDialog_, SIGNAL(robotDisconnected()),
+          controlPanel_, SLOT(stopWork()));
 }
 

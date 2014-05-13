@@ -6,6 +6,7 @@
 #include <QMutex>
 #include <QTimer>
 #include <linkbot.h>
+#include "QMobot.h"
 
 class AsyncRobot:public QObject
 {
@@ -13,7 +14,7 @@ class AsyncRobot:public QObject
   public:
     AsyncRobot();
     ~AsyncRobot();
-    void bindMobot(CLinkbot* mobot);
+    void bindMobot(QMobot* mobot);
     QColor getLEDColor();
 
   public slots:
@@ -59,7 +60,7 @@ class AsyncRobot:public QObject
     void speed2Changed(int speed);
 
   private:
-    CLinkbot* mobot_;
+    QMobot* mobot_;
     bool jointSignalEnable_;
     bool accelSignalEnable_;
     QMutex mobotLock_; // Protects 3 above members

@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "robotmanager.h"
+#include "QMobot.h"
 
 CRobotManager::CRobotManager()
 {
@@ -283,7 +284,7 @@ void CRobotManager::play()
   //THREAD_CREATE(&thread, robotManagerPlayThread, this);
 }
 
-RecordMobot* CRobotManager::getMobot(int connectIndex)
+QMobot* CRobotManager::getMobot(int connectIndex)
 {
 	if(connectIndex < 0 || connectIndex >= numConnected()) {
 		return NULL;
@@ -301,7 +302,7 @@ RecordMobot* CRobotManager::getMobot(int connectIndex)
 	return _mobots[i];
 }
 
-RecordMobot* CRobotManager::getMobotIndex(int index)
+QMobot* CRobotManager::getMobotIndex(int index)
 {
   return _mobots[index];
 }

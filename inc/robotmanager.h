@@ -55,8 +55,8 @@ class CRobotManager : public ConfigFile
     void restoreSavedMobot(int index);
     void addDelay(double seconds);
     void play();
-    RecordMobot* getMobot(int connectIndex);
-    RecordMobot* getMobotIndex(int index);
+    QMobot* getMobot(int connectIndex);
+    QMobot* getMobotIndex(int index);
     string* generateChProgram(bool looped = false, bool holdOnExit = false);
     string* generateCppProgram(bool looped = false, bool holdOnExit = false);
     string* generatePythonProgram(bool looped = false, bool holdOnExit = false);

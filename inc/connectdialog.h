@@ -25,6 +25,7 @@ class ConnectDialogForm : public QWidget, public Ui::ConnectDialogForm
 
   signals:
     void activeRobotSelected(const QModelIndex &index);
+    void robotDisconnected();
 
   private:
     void connectSignals(void);

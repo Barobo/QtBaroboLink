@@ -126,6 +126,7 @@ void ConnectDialogForm::connectIndices()
 
 void ConnectDialogForm::disconnectIndices()
 {
+  emit robotDisconnected();
   QModelIndexList selected = tableView_Robots->selectionModel()->selectedIndexes();
   for(int i = 0; i < selected.size()-1; i++) {
     robotManager()->disconnectIndex(selected.at(i).row());

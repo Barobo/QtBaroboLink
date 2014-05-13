@@ -399,6 +399,7 @@ RecordMobot::RecordMobot()
   _motions = (struct motion_s**)malloc(sizeof(struct motion_s*) * 100); 
   memset(_motions, 0, sizeof(struct motion_s*) * 100);
   _numMotionsAllocated = 100;
+  _connectStatus = RMOBOT_NOT_CONNECTED;
 }
 
 void RecordMobot::init(const char *name)
