@@ -149,6 +149,7 @@ void ControlPanelForm::enable(int state)
   this->groupBox_2->setEnabled(enable);
   this->groupBox_3->setEnabled(enable);
   this->groupBox_4->setEnabled(enable);
+  this->groupBox_5->setEnabled(enable);
 }
 
 void ControlPanelForm::setJ1Label(int value)
@@ -265,13 +266,12 @@ void ControlPanelForm::moveMotorButtonClicked()
 void ControlPanelForm::setActiveRobot(int index)
 {
   /* Get the mobot object */
-  RecordMobot *mobot;
+  QMobot *mobot;
   mobot = robotManager()->getMobotIndex(index);
   if(mobot != NULL && mobot->isConnected()) {
     this->setEnabled(true);
     asyncrobot_->bindMobot(mobot);
-    asyncrobot_->enableJointSignals(true);
-    asyncrobot_->enableAccelSignals(true);
+    asyncrobot_->setState(enabled_);
     QMetaObject::invokeMethod(asyncrobot_, "startWork", Qt::QueuedConnection);
     emit setUIWidgetsState(true);
     int form;
@@ -287,6 +287,11 @@ void ControlPanelForm::setActiveRobot(int index)
     this->setEnabled(false);
     emit setUIWidgetsState(false);
   }
+}
+
+void ControlPanelForm::stopWork()
+{
+    asyncrobot_->stopWork();
 }
 
 void ControlPanelForm::setActiveRobot(const QModelIndex &index)

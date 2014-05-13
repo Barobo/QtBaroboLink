@@ -100,6 +100,7 @@ void ConnectDialogForm::displayContextMenu(const QPoint &/*p*/)
   QAction *connectaction = menu.addAction("Connect");
   QAction *disconnectaction = menu.addAction("Disconnect");
   QAction *removeaction = menu.addAction("Remove");
+  QAction *info = menu.addAction("Info");
   if(robotManager()->isConnected(robotManager()->activeIndex())) {
     connectaction->setEnabled(false);
   } else {
@@ -108,6 +109,7 @@ void ConnectDialogForm::displayContextMenu(const QPoint &/*p*/)
   QObject::connect(connectaction, SIGNAL(triggered()), this, SLOT(connectIndices()));
   QObject::connect(disconnectaction, SIGNAL(triggered()), this, SLOT(disconnectIndices()));
   QObject::connect(removeaction, SIGNAL(triggered()), this, SLOT(removeIndices()));
+  QObject::connect(info, SIGNAL(triggered()), this, SLOT(displayRobotInfo()));
   menu.exec(QCursor::pos());
 }
 
@@ -126,9 +128,72 @@ void ConnectDialogForm::connectIndices()
 
 void ConnectDialogForm::disconnectIndices()
 {
+  emit robotDisconnected();
   QModelIndexList selected = tableView_Robots->selectionModel()->selectedIndexes();
-  for(int i = 0; i < selected.size(); i++) {
+  for(int i = 0; i < selected.size()-1; i++) {
     robotManager()->disconnectIndex(selected.at(i).row());
+  }
+}
+
+void ConnectDialogForm::displayRobotInfo()
+{
+    QModelIndexList selected = tableView_Robots->selectionModel()->selectedIndexes();
+    if(selected.size() < 1) return;
+    QMobot* mobot = robotManager()->getMobotIndex(selected.at(0).row());
+    if( (mobot == NULL) ||
+        (mobot->connectStatus() != RMOBOT_CONNECTED))
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Cannot display info: Robot not connected.");
+        msgBox.exec();
+        return;
+    }
+    RobotInfoForm *dialog = new RobotInfoForm();
+    dialog->setupUi(dialog);
+    int form;
+    mobot->getFormFactor(form);
+    switch(form) {
+        case MOBOTFORM_ORIGINAL:
+            dialog->lineEdit_robotModel->setText("Mobot");
+            break;
+        case MOBOTFORM_I:
+            dialog->lineEdit_robotModel->setText("Linkbot-I");
+            break;
+        case MOBOTFORM_L:
+            dialog->lineEdit_robotModel->setText("Linkbot-L");
+            break;
+        default:
+            dialog->lineEdit_robotModel->setText("Unknown");
+            break;
+    }
+    dialog->lineEdit_robotId->setText(mobot->getID());
+    double voltage;
+    mobot->getBatteryVoltage(voltage);
+    dialog->lineEdit_batteryVoltage->setText(QString("%1").arg(voltage));
+    unsigned int version;
+    mobot->getVersions(version);
+    dialog->lineEdit_firmwareVersion->setText(
+            QString("v%1.%2.%3")
+                .arg((version>>16) & 0x00ff)
+                .arg((version>> 8) & 0x00ff)
+                .arg(version & 0x00ff)
+            );
+    dialog->exec();
+}
+
+void ConnectDialogForm::moveUp()
+{
+  QModelIndexList selected = tableView_Robots->selectionModel()->selectedIndexes();
+  if(selected.size() > 0) {
+      robotManager()->moveEntryUp(selected.at(0).row());
+  }
+}
+
+void ConnectDialogForm::moveDown()
+{
+  QModelIndexList selected = tableView_Robots->selectionModel()->selectedIndexes();
+  if(selected.size() > 0) {
+      robotManager()->moveEntryDown(selected.at(0).row());
   }
 }
 
@@ -165,4 +230,12 @@ void ConnectDialogForm::connectSignals(void)
       this, SLOT(connectIndices()));
   QObject::connect(this->pushButton_disconnect, SIGNAL(clicked()),
       this, SLOT(disconnectIndices()));
+  QObject::connect(this->pushButton_moveUp, SIGNAL(clicked()),
+      this, SLOT(moveUp()));
+  QObject::connect(this->pushButton_moveDown, SIGNAL(clicked()),
+      this, SLOT(moveDown()));
+  QObject::connect(this->pushButton_remove, SIGNAL(clicked()),
+          this, SLOT(removeIndices()));
+  QObject::connect(this->pushButton_getInfo, SIGNAL(clicked()),
+          this, SLOT(displayRobotInfo()));
 }

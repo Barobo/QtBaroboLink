@@ -32,3 +32,13 @@ int QMobot::connectWithAddress(const char address[], int channel)
   }
   return 0;
 }
+
+int QMobot::disconnectRobot()
+{
+    _connectStatus = RMOBOT_NOT_CONNECTED;
+    emit connectStatusChanged(RMOBOT_NOT_CONNECTED);
+    lock_.lock();
+    int rc = CMobot::disconnect();
+    lock_.unlock();
+    return rc;
+}
