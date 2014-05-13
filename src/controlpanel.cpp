@@ -267,7 +267,7 @@ void ControlPanelForm::moveMotorButtonClicked()
 void ControlPanelForm::setActiveRobot(int index)
 {
   /* Get the mobot object */
-  RecordMobot *mobot;
+  QMobot *mobot;
   mobot = robotManager()->getMobotIndex(index);
   if(mobot != NULL && mobot->isConnected()) {
     this->setEnabled(true);
@@ -288,6 +288,11 @@ void ControlPanelForm::setActiveRobot(int index)
     this->setEnabled(false);
     emit setUIWidgetsState(false);
   }
+}
+
+void ControlPanelForm::stopWork()
+{
+    asyncrobot_->stopWork();
 }
 
 void ControlPanelForm::setActiveRobot(const QModelIndex &index)

@@ -54,7 +54,8 @@ FORMS    += mainwindow.ui \
     connectpanel.ui \
     scandialog.ui \
     scanwidget.ui \
-    auxcontrol.ui
+    auxcontrol.ui \
+    robotinfo.ui
 
 LIBS += -L../stage/lib -lbarobo 
 

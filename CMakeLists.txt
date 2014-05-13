@@ -109,6 +109,7 @@ qt5_wrap_ui(UIFILES
     scandialog.ui
     scanwidget.ui
     auxcontrol.ui
+    robotinfo.ui
    )
 
 ADD_DEFINITIONS(${QT_DEFINITIONS})

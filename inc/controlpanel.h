@@ -14,6 +14,7 @@ class ControlPanelForm : public QWidget, private Ui::ControlPanelForm
   public slots:
     void setActiveRobot(int index);
     void setActiveRobot(const QModelIndex &index);
+    void stopWork();
     void driveJoint1To(int);
     void driveJoint2To(int);
     void enable(int state);

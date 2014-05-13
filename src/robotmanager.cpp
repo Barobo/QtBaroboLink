@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "robotmanager.h"
+#include "QMobot.h"
 
 CRobotManager::CRobotManager()
 {
@@ -156,9 +157,7 @@ int CRobotManager::disconnect(int index)
   /* First check to see how the robot is connected. If it is a TTY connection,
    * we just want to remove the robot from the list of connected robots, but we
    * don't actually want to disconnect. */
-  if(((mobot_t*)_mobots[index])->connectionMode != MOBOTCONNECT_TTY) {
-    Mobot_disconnect((mobot_t*)_mobots[index]);
-  }
+  _mobots[index]->disconnectRobot();
   //free(_mobots[index]);
   //_mobots[index] = NULL;
   return 0;
@@ -285,7 +284,7 @@ void CRobotManager::play()
   //THREAD_CREATE(&thread, robotManagerPlayThread, this);
 }
 
-RecordMobot* CRobotManager::getMobot(int connectIndex)
+QMobot* CRobotManager::getMobot(int connectIndex)
 {
 	if(connectIndex < 0 || connectIndex >= numConnected()) {
 		return NULL;
@@ -303,7 +302,7 @@ RecordMobot* CRobotManager::getMobot(int connectIndex)
 	return _mobots[i];
 }
 
-RecordMobot* CRobotManager::getMobotIndex(int index)
+QMobot* CRobotManager::getMobotIndex(int index)
 {
   return _mobots[index];
 }

@@ -73,38 +73,75 @@
            <height>320</height>
           </rect>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <layout class="QGridLayout" name="robotsGridLayout">
-            <item row="0" column="0">
-             <widget class="QTableView" name="tableView_Robots">
-              <property name="alternatingRowColors">
-               <bool>true</bool>
-              </property>
-              <property name="showGrid">
-               <bool>false</bool>
-              </property>
-              <attribute name="horizontalHeaderVisible">
-               <bool>false</bool>
-              </attribute>
-              <attribute name="verticalHeaderVisible">
-               <bool>false</bool>
-              </attribute>
-             </widget>
-            </item>
-           </layout>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="5" column="1">
+           <widget class="QPushButton" name="pushButton_remove">
+            <property name="text">
+             <string>Remove</string>
+            </property>
+           </widget>
           </item>
-          <item>
+          <item row="3" column="1">
+           <widget class="QPushButton" name="pushButton_moveDown">
+            <property name="text">
+             <string>Move Down</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton_disconnect">
+            <property name="text">
+             <string>Disconnect</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" rowspan="7">
+           <widget class="QTableView" name="tableView_Robots">
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="showGrid">
+             <bool>false</bool>
+            </property>
+            <attribute name="horizontalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="pushButton_moveUp">
+            <property name="text">
+             <string>Move Up</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>125</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_connect">
             <property name="text">
              <string>Connect</string>
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_disconnect">
+          <item row="4" column="1">
+           <widget class="QPushButton" name="pushButton_getInfo">
             <property name="text">
-             <string>Disconnect</string>
+             <string>Get Info</string>
             </property>
            </widget>
           </item>
