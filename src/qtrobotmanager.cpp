@@ -153,6 +153,30 @@ void QtRobotManager::disconnectActiveIndex()
   CRobotManager::disconnect(_activeIndex);
 }
 
+int QtRobotManager::moveEntryUp(const QModelIndex &index)
+{
+    return moveEntryUp(index.row());
+}
+
+int QtRobotManager::moveEntryUp(int index)
+{
+    int rc = CRobotManager::moveEntryUp(index);
+    emit layoutChanged();
+    return rc;
+}
+
+int QtRobotManager::moveEntryDown(const QModelIndex &index)
+{
+    return moveEntryDown(index.row());
+}
+
+int QtRobotManager::moveEntryDown(int index)
+{
+    int rc = CRobotManager::moveEntryDown(index);
+    emit layoutChanged();
+    return rc;
+}
+
 void QtRobotManager::removeActiveIndex()
 {
   disconnectActiveIndex();

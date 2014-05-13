@@ -133,6 +133,22 @@ void ConnectDialogForm::disconnectIndices()
   }
 }
 
+void ConnectDialogForm::moveUp()
+{
+  QModelIndexList selected = tableView_Robots->selectionModel()->selectedIndexes();
+  if(selected.size() > 0) {
+      robotManager()->moveEntryUp(selected.at(0).row());
+  }
+}
+
+void ConnectDialogForm::moveDown()
+{
+  QModelIndexList selected = tableView_Robots->selectionModel()->selectedIndexes();
+  if(selected.size() > 0) {
+      robotManager()->moveEntryDown(selected.at(0).row());
+  }
+}
+
 void ConnectDialogForm::removeIndices()
 {
   QModelIndexList selected = tableView_Robots->selectionModel()->selectedRows();
@@ -166,4 +182,8 @@ void ConnectDialogForm::connectSignals(void)
       this, SLOT(connectIndices()));
   QObject::connect(this->pushButton_disconnect, SIGNAL(clicked()),
       this, SLOT(disconnectIndices()));
+  QObject::connect(this->pushButton_moveUp, SIGNAL(clicked()),
+      this, SLOT(moveUp()));
+  QObject::connect(this->pushButton_moveDown, SIGNAL(clicked()),
+      this, SLOT(moveDown()));
 }

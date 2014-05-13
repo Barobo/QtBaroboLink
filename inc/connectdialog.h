@@ -21,6 +21,8 @@ class ConnectDialogForm : public QWidget, public Ui::ConnectDialogForm
     void displayContextMenu(const QPoint &p);
     void connectIndices();
     void disconnectIndices();
+    void moveUp();
+    void moveDown();
     void removeIndices();
 
   signals:
