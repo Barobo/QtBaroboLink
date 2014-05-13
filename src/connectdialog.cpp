@@ -186,4 +186,6 @@ void ConnectDialogForm::connectSignals(void)
       this, SLOT(moveUp()));
   QObject::connect(this->pushButton_moveDown, SIGNAL(clicked()),
       this, SLOT(moveDown()));
+  QObject::connect(this->pushButton_remove, SIGNAL(clicked()),
+          this, SLOT(removeIndices()));
 }
