@@ -9,6 +9,7 @@ class QMobot : public QObject, public RecordMobot
     ~QMobot();
 
     int connectWithAddress(const char address[], int channel);
+    int disconnectRobot();
 
   signals:
     void connectStatusChanged(int connectStatus);

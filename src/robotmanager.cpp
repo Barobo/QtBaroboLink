@@ -156,9 +156,7 @@ int CRobotManager::disconnect(int index)
   /* First check to see how the robot is connected. If it is a TTY connection,
    * we just want to remove the robot from the list of connected robots, but we
    * don't actually want to disconnect. */
-  if(((mobot_t*)_mobots[index])->connectionMode != MOBOTCONNECT_TTY) {
-    Mobot_disconnect((mobot_t*)_mobots[index]);
-  }
+  _mobots[index]->disconnectRobot();
   //free(_mobots[index]);
   //_mobots[index] = NULL;
   return 0;
