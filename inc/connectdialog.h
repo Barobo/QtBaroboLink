@@ -2,8 +2,14 @@
 #define CONNECTDIALOG_H_
 
 #include "ui_connectpanel.h"
+#include "ui_robotinfo.h"
 #include "scandialog.h"
 #include "scanlist.h"
+
+class RobotInfoForm : public QDialog, public Ui::RobotInfoDialog
+{
+    Q_OBJECT
+};
 
 class ConnectDialogForm : public QWidget, public Ui::ConnectDialogForm
 {
@@ -21,6 +27,7 @@ class ConnectDialogForm : public QWidget, public Ui::ConnectDialogForm
     void displayContextMenu(const QPoint &p);
     void connectIndices();
     void disconnectIndices();
+    void displayRobotInfo();
     void moveUp();
     void moveDown();
     void removeIndices();
