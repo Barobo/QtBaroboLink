@@ -269,7 +269,10 @@ void ControlPanelForm::setActiveRobot(int index)
   /* Get the mobot object */
   QMobot *mobot;
   mobot = robotManager()->getMobotIndex(index);
-  if(mobot != NULL && mobot->isConnected()) {
+  if( (mobot != NULL) && 
+      (mobot->connectStatus() == RMOBOT_CONNECTED) &&
+      mobot->isConnected()) 
+  {
     this->setEnabled(true);
     asyncrobot_->bindMobot(mobot);
     asyncrobot_->setState(enabled_);
