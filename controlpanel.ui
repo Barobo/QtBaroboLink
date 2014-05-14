@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>392</width>
-    <height>495</height>
+    <height>516</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -49,7 +49,7 @@
       <bool>true</bool>
      </property>
      <property name="title">
-      <string>Move Motors</string>
+      <string>Move Joints (degrees)</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="0" column="0">
@@ -299,7 +299,7 @@
    <item row="3" column="0">
     <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
-      <string>Speed</string>
+      <string>Speed ([0, 240] degrees/second)</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="1" column="1">
@@ -325,7 +325,7 @@
       <item row="2" column="0" colspan="2">
        <widget class="QPushButton" name="pushButton_setSpeed">
         <property name="text">
-         <string>Set Speed</string>
+         <string>Set Speeds</string>
         </property>
        </widget>
       </item>
@@ -392,7 +392,7 @@
       <item row="2" column="0" colspan="3">
        <widget class="QPushButton" name="button_moveToZero">
         <property name="text">
-         <string>Zero</string>
+         <string>Reset To Zero</string>
         </property>
        </widget>
       </item>
