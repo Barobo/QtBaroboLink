@@ -328,7 +328,7 @@ void AsyncRobot::startWork()
   }
   anglesDirtyMask_ = 0;
   connect(timer_, SIGNAL(timeout()), this, SLOT(doWork()));
-  timer_->start();
+  timer_->start(100);
   mobotLock_.unlock();
 }
 
