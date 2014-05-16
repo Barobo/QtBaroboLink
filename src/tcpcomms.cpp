@@ -92,5 +92,6 @@ void CommsForwarding::newConnection()
   clients_.prepend(client);
   robot->enableEventCallback(eventCallback, client);
   qDebug() << "Finished receiving new connection.";
+  emit newClientConnected();
 }
 

@@ -15,6 +15,10 @@ class ControlPanelForm : public QWidget, private Ui::ControlPanelForm
     void setActiveRobot(int index);
     void setActiveRobot(const QModelIndex &index);
     void stopWork();
+    void disable() {
+        checkBox_enable->setChecked(false);
+        enable(0);
+    }
     void driveJoint1To(int);
     void driveJoint2To(int);
     void enable(int state);

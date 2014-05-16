@@ -85,5 +85,12 @@ void MainWindow::connectSignals ()
       controlPanel_, SLOT(setActiveRobot(int)));
   QObject::connect(connectDialog_, SIGNAL(robotDisconnected()),
           controlPanel_, SLOT(stopWork()));
+
+  QObject::connect(comms_, SIGNAL(newClientConnected()), controlPanel_,
+          SLOT(disable()));
+  QObject::connect(comms_, SIGNAL(newClientConnected()), asyncRobot_,
+          SLOT(disableJointSignals()));
+  QObject::connect(comms_, SIGNAL(newClientConnected()), asyncRobot_,
+          SLOT(disableAccelSignals()));
 }
 
