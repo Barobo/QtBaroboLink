@@ -28,6 +28,28 @@ QtRobotManager::~QtRobotManager()
 int QtRobotManager::connectIndex(int index)
 {
   int rc = CRobotManager::connectIndex(index);
+  if(rc == 0) {
+      /* Check firmware version of robot */
+      unsigned int version;
+      QMobot* robot = getMobotIndex(index);
+      robot->getVersions(version);
+      if(version < Mobot_protocolVersion()) {
+#ifdef __APPLE__
+          emit errorMessage(QString("Warning: Robot ") + robot->getID() + 
+                  QString(
+                  " has old firmware. To update the firmware, "
+                  "close BaroboLink and run the LinkbotFirmwareUpdate "
+                  " utility located in your Applications folder."));
+#else
+          emit errorMessage(QString("Warning: Robot ") + robot->getID() + 
+                  QString(
+                  " has old firmware. To update the firmware, "
+                  "close BaroboLink and run the LinkbotFirmwareUpdate "
+                  " utility located in your start menu at "
+                  "Start->BaroboLink->LinkbotFirmwareUpdate."));
+#endif
+      }
+  }
   return rc;
 }
 

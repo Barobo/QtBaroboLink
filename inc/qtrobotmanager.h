@@ -46,7 +46,7 @@ class QtRobotManager : public QAbstractTableModel, public CRobotManager
 
   signals:
     void activeRobotSelected(int index);
-
+    void errorMessage(QString msg);
 
   private:
     int _activeIndex;

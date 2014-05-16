@@ -92,5 +92,8 @@ void MainWindow::connectSignals ()
           SLOT(disableJointSignals()));
   QObject::connect(comms_, SIGNAL(newClientConnected()), asyncRobot_,
           SLOT(disableAccelSignals()));
+
+  QObject::connect(robotManager(), SIGNAL(errorMessage(QString)),
+          this, SLOT(errorDialog(const QString &)));
 }
 
