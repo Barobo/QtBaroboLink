@@ -134,16 +134,13 @@ bool CRobotManager::isPlaying()
 
 int CRobotManager::connectIndex(int index)
 {
-  if(isConnected(index)) {
-    return 0;
-  }
   char name[80];
   sprintf(name, "mobot%d", numConnected()+1);
   int err;
   if(_mobots[index] == NULL) {
     _mobots[index] = new QMobot(0);
+    _mobots[index]->init(name);
   }
-  _mobots[index]->init(name);
   printf("(barobo) INFO: connecting %s at address %s\n", name, getEntry(index));
   err = _mobots[index]->connectWithAddress(getEntry(index), 1 );
   return err;

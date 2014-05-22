@@ -38,7 +38,8 @@ int QMobot::disconnectRobot()
     _connectStatus = RMOBOT_NOT_CONNECTED;
     emit connectStatusChanged(RMOBOT_NOT_CONNECTED);
     lock_.lock();
-    int rc = CMobot::disconnect();
+    //int rc = CMobot::disconnect();
+    int rc = 0;
     lock_.unlock();
     return rc;
 }
