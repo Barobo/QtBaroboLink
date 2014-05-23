@@ -209,6 +209,7 @@ void QtRobotManager::removeActiveIndex()
 
 void QtRobotManager::addEntry(QString entry)
 {
+  CRobotManager::addEntry(entry.toStdString());
   ConfigFile::addEntry(entry.toStdString());
   ConfigFile::write();
   emit layoutChanged();

@@ -66,7 +66,13 @@ int CRobotManager::addEntry(const char* entry)
 
 int CRobotManager::addEntry(string entry)
 {
-  return CRobotManager::addEntry(entry.c_str());
+  ConfigFile::addEntry(entry);
+  ConfigFile::write();
+  int i;
+  for(i = MAX_CONNECTED-1; i >= 0; i--) {
+      _mobots[i+1] = _mobots[i];
+  }
+  _mobots[0] = new QMobot(0);
 }
 
 int CRobotManager::disconnectAll()
