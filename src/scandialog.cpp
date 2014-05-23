@@ -1,5 +1,6 @@
 #include "scandialog.h"
 #include "qtrobotmanager.h"
+#include <QDebug>
 
 ScanDialog::ScanDialog(QWidget *parent, Qt::WindowFlags f)
   : QDialog(parent, f)
